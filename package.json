@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
+    "start":"npm server.js",
     "start-dev": "tsc && concurrently \"tsc -w\" ",
     "postinstall": "tsc"
   },

@@ -93,6 +93,6 @@ app.all('/*', function(req, res) {
     res.sendStatus(404);
 });
 
-app.listen(3500, function () {
+app.listen(process.env.port || process.env.PORT || 5000, function () {
     console.log('App listening on port 3500');
 });
