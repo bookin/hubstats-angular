@@ -89,7 +89,7 @@ app.get('/github/getRepoReferrers/:token/:owner/:repo', function(req, res) {
 
 
 app.all('/*', function(req, res) {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(__dirname + '/index.html');
     //res.sendStatus(404);
 });
 
