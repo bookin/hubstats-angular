@@ -1,0 +1,43 @@
+{
+  "name": "habstats",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js",
+    "start-dev": "tsc && concurrently \"tsc -w\" ",
+    "postinstall": "tsc"
+  },
+  "dependencies": {
+    "@angular/common": "~2.3.0",
+    "@angular/compiler": "~2.3.0",
+    "@angular/core": "~2.3.0",
+    "@angular/forms": "~2.3.0",
+    "@angular/http": "~2.3.0",
+    "@angular/platform-browser": "~2.3.0",
+    "@angular/platform-browser-dynamic": "~2.3.0",
+    "@angular/router": "~3.3.0",
+    "@angular/upgrade": "~2.3.0",
+    "@types/node": "^6.0.53",
+    "angular-in-memory-web-api": "~0.1.16",
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "core-js": "^2.4.1",
+    "express": "^4.14.0",
+    "reflect-metadata": "^0.1.8",
+    "request": "^2.79.0",
+    "rxjs": "5.0.0-rc.4",
+    "systemjs": "^0.19.41",
+    "zone.js": "^0.7.2"
+  },
+  "devDependencies": {
+    "concurrently": "^3.1.0"
+  },
+  "engines": {
+    "npm": "3.10.3",
+    "node": "6.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.heroku.com/hubstats-angular.git"
+  }
+}

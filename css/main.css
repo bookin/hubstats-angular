@@ -1,0 +1,71 @@
+html,body{
+    width: 100%;
+    height: 100%;
+}
+
+body{
+    font-family: 'Roboto', sans-serif;
+}
+#page{
+    margin-top: 20px;
+}
+.poser{
+    display: inline-block;
+    vertical-align: middle;
+    max-width:100%;
+}
+.panel-body .head h2 a{
+    color: #333;
+}
+.panel-body .head h2 a:hover,
+.panel-body .head h2 a:visited,
+.panel-body .head h2 a:active{
+    text-decoration: none;
+}
+.panel-body .head h2{
+    margin-top: 0;
+    font-style: italic;
+    font-weight: 300;
+    display: inline-block;
+}
+.poser-list{
+    margin-top: 10px;
+}
+.panel-default{
+    box-shadow: 2px 2px 2px #ddd;
+}
+.cover-img{
+    position: fixed;
+    min-width: 100%;
+    min-height: 100%;
+    left: 0;
+    top: 0;
+    opacity: 0.1;
+}
+.site-wrapper{
+    overflow: hidden;
+}
+.site-wrapper-inner{
+    position: relative;
+    z-index: 1;
+}
+
+.referrers{
+    display: block;
+}
+
+.loader{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 50;
+    position: static;
+}
+
+.loader img{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -75px;
+    margin-left: -100px;
+}

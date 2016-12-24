@@ -1,0 +1,31 @@
+<div id="page" class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <a [routerLink]="['/logout']">Выйти</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-default" *ngFor="let repo of repositories">
+                <div class="panel-body">
+                    <div class="head">
+                        <h2><a href="https://github.com/{{repo.owner}}/{{repo.name}}" target="_blank">{{repo.name}}</a></h2>
+                        <span data-toggle="tooltip" data-title="Views/Unique" data-placement="top"></span>{{repo.count}}/{{repo.uniques}}
+                        <ul class="poser-list list-unstyled list-inline pull-right">
+                            <li><img src="https://poser.pugx.org/{{repo.owner}}/{{repo.name}}/downloads?format=flat" class="poser"></li>
+                            <li><img src="https://poser.pugx.org/{{repo.owner}}/{{repo.name}}/d/monthly?format=flat" class="poser"></li>
+                            <li><img src="https://poser.pugx.org/{{repo.owner}}/{{repo.name}}/d/daily?format=flat" class="poser"></li>
+                        </ul>
+                    </div>
+                    <small class="referrers" *ngIf="repo.referrers">
+                        <ul class="list-unstyled list-inline text-muted">
+                            <li *ngFor="let referrer of repo.referrers">{{referrer.referrer}} {{referrer.count}}/{{referrer.uniques}}</li>
+                        </ul>
+                    </small>
+                    <div class="clearfix"></div>
+                    <div morris-area id="{{repo.name}}" [name]="repo.name" [data]="repo.data" *ngIf="repo.data.length > 0"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
