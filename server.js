@@ -89,10 +89,10 @@ app.get('/github/getRepoReferrers/:token/:owner/:repo', function(req, res) {
 
 
 app.all('/*', function(req, res) {
-    //res.sendFile(path.join(__dirname,'index.html'));
-    res.sendStatus(404);
+    res.sendFile(path.join(__dirname, 'index.html'));
+    //res.sendStatus(404);
 });
 
-app.listen(process.env.port || process.env.PORT || 5000, function () {
-    console.log('App listening on port 3500');
+var listener = app.listen(process.env.port || process.env.PORT || 5000, function () {
+    console.log('App listening on port %d', listener.address().port);
 });
