@@ -23,14 +23,13 @@ app.get('/token/:code', function(req, res) {
     request.post({
         uri: 'https://github.com/login/oauth/access_token',
         form: {
-            client_id:'3ec3571980c809699211',
-            client_secret:'fa420a6dca9106c34b98a35d19c0d269cff6d9ae',
-            code:           req.params.code
+            client_id: process.env.GITHUB_CLIENT_ID,
+            client_secret: process.env.GITHUB_CLIENT_SECRET,
+            code: req.params.code
         },
         json: true
     }, function(err, httpResponse, body) {
-        //console.log(httpResponse);
-
+        console.log(body);
         if (err) {
             res.send(500, { error: err });
             return;
@@ -87,6 +86,16 @@ app.get('/github/getRepoReferrers/:token/:owner/:repo', function(req, res) {
     }
 });
 
+var protected = function(req, res, next){
+    console.log(req.hostname);
+    return next();
+    //return res.status(400)
+};
+
+app.get('/env/config', protected, function(req, res) {
+    var env = process.env;
+    res.json(env);
+});
 
 app.all('/*', function(req, res) {
     res.sendFile(__dirname + '/index.html');

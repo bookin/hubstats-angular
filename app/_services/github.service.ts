@@ -36,7 +36,7 @@ export class GithubService {
             data['access_token'] = this.accessToken;
         }
         let params = this.objectToParams(data);
-console.info(GithubService.apiUrl+method+'?'+params);
+
         return this.http.get(GithubService.apiUrl+method+'?'+params).map(response => response.json(), { "headers":headers });
     }
 
