@@ -1,3 +1,5 @@
+![alt tag](https://raw.githubusercontent.com/bookin/hubstats-angular/master/img/stats.JPG)
+
 DEMO - [https://hubstats-angular.herokuapp.com/](https://hubstats-angular.herokuapp.com/)
 
 RUN LOCAL WINDOWS - `set GITHUB_CLIENT_ID=...&& set GITHUB_CLIENT_SECRET=...&& node server.js`
