@@ -17,7 +17,7 @@ export class AuthenticationService {
     }
 
     getAuthLink(){
-        return 'https://github.com/login/oauth/authorize?client_id=3ec3571980c809699211&redirect_uri=http://hubstat.loc/login&scope=repo';
+        return `https://github.com/login/oauth/authorize?client_id=3ec3571980c809699211&redirect_uri=${AppConfig.BACKEND_URL}/login&scope=repo`;
     }
 
     requestAccessToken(code: string){
