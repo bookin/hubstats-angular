@@ -10,7 +10,8 @@
                 <div class="panel-body">
                     <div class="head">
                         <h2><a href="https://github.com/{{repo.owner}}/{{repo.name}}" target="_blank">{{repo.name}}</a></h2>
-                        <span data-toggle="tooltip" data-title="Views/Unique" data-placement="top"></span>{{repo.count}}/{{repo.uniques}}
+                        <span data-toggle="tooltip" data-title="Views/Unique" data-placement="top">{{repo.count}}/{{repo.uniques}}</span>
+                        <ul *ngIf="repo.languages" class="list-inline"><li *ngFor="let lang of repo.languages"><b>{{lang.name}}</b> {{lang.percent}}%</li></ul>
                         <ul class="poser-list list-unstyled list-inline pull-right">
                             <li><img src="https://poser.pugx.org/{{repo.owner}}/{{repo.name}}/downloads?format=flat" class="poser"></li>
                             <li><img src="https://poser.pugx.org/{{repo.owner}}/{{repo.name}}/d/monthly?format=flat" class="poser"></li>

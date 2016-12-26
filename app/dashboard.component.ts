@@ -43,11 +43,23 @@ export class DashboardComponent  implements OnInit  {
 
                                 Observable.forkJoin([
                                     this.githubService.getRepoTraffic(this.owner, repositories[i]['name']),
-                                    this.githubService.getRepoReferrers(this.owner, repositories[i]['name'])
+                                    this.githubService.getRepoReferrers(this.owner, repositories[i]['name']),
+                                    this.githubService.getRepoLanguages(this.owner, repositories[i]['name'])
                                 ]).subscribe(
                                     response => {
                                         let traffic = response[0];
                                         let referrers = response[1];
+                                        let languages = response[2];
+
+                                        const sumValues = (obj: Object) => { return (<any>Object).values(obj).reduce((a: number, b:number) => a + b)};
+
+                                        if(Object.keys(languages).length){
+                                            let totalSum = sumValues(languages);
+                                            for(var lang in languages){
+                                                languages[lang] = {'name':lang, 'percent':((languages[lang]/totalSum)*100).toFixed(2)};
+                                            }
+                                            traffic['languages']=(<any>Object).values(languages);
+                                        }
 
                                         traffic['name']=repositories[i]['name'];
                                         traffic['owner']=this.owner;
@@ -88,7 +100,8 @@ export class DashboardComponent  implements OnInit  {
                                         localStorage.setItem(this.STORAGE_ID, JSON.stringify(this.repositories));
                                     },
                                     error => {
-                                        console.log(JSON.stringify(error.json()));
+                                        console.error(error);
+                                        //console.log(JSON.stringify(error.json()));
                                     },
                                     () => {
                                         console.log("the all subscriptions is completed");

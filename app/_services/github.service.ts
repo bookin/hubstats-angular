@@ -30,6 +30,10 @@ export class GithubService {
         return this.http.get(`${AppConfig.BACKEND_URL}/github/getRepoReferrers/${this.accessToken}/${owner}/${repo}`).map(response => response.json());
     }
 
+    getRepoLanguages(owner: string, repo: string){
+        return this.sendRequest(`/repos/${owner}/${repo}/languages`);
+    }
+
     sendRequest(method: string, data?: Object, headers?: Object){
         data = data || {};
         if(typeof data['access_token'] === "undefined"){
