@@ -17,7 +17,6 @@ export class DashboardComponent  implements OnInit  {
 
     STORAGE_REPOSITORIES = 'repositories';
     STORAGE_OWNER = 'owner';
-    STORAGE_TIMESTAMP = 'expiration_time';
     STORAGE_TIME_LIVE = 60*30*1000; //milliseconds
 
     constructor(
@@ -43,10 +42,9 @@ export class DashboardComponent  implements OnInit  {
         }
 
         //this.storage.removeItem(this.STORAGE_REPOSITORIES);
-        let expiration_time = parseInt(this.storage.getItem(this.STORAGE_TIMESTAMP));
         let localRepositories = this.storage.getItem(this.STORAGE_REPOSITORIES);
 
-        if( localRepositories !== null && localRepositories !== "" && (expiration_time && (expiration_time > parseInt(new Date().getTime().toString()))) ){
+        if( localRepositories !== null && localRepositories !== "" && this.storage.isTimeExpiration(this.STORAGE_REPOSITORIES) ){
             this.repositories = JSON.parse(localRepositories);
             this.sortRepositories();
             this.owner = JSON.parse(this.storage.getItem(this.STORAGE_OWNER));
@@ -127,11 +125,8 @@ export class DashboardComponent  implements OnInit  {
                                     this.repositories.push(traffic);
                                     this.sortRepositories();
 
-                                    let now = new Date();
-                                    now.setTime(now.getTime() + this.STORAGE_TIME_LIVE);
-                                    this.storage.setItem(this.STORAGE_TIMESTAMP, now.getTime().toString());
                                     this.storage.removeItem(this.STORAGE_REPOSITORIES);
-                                    this.storage.setItem(this.STORAGE_REPOSITORIES, JSON.stringify(this.repositories));
+                                    this.storage.setItem(this.STORAGE_REPOSITORIES, JSON.stringify(this.repositories), this.STORAGE_TIME_LIVE);
                                 },
                                 error => {
                                     console.error(error);
