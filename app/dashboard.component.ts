@@ -204,4 +204,9 @@ export class DashboardComponent  implements OnInit  {
             return b['lastDate'] - a['lastDate'];
         });*/
     }
+
+    onRefreshData(event: any){
+        event.preventDefault();
+        this.reloadData();
+    }
 }
