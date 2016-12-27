@@ -125,3 +125,20 @@ a.logout{
     display: block;
     float: right;
 }
+
+.display-inline{
+    display: inline-block;
+}
+
+.vertical-middle{
+    vertical-align: middle;
+}
+
+.user > div{
+    line-height: 15px;
+}
+
+.skills span{
+    font-weight: 300;
+    font-size: 10px;
+}

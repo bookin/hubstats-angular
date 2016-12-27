@@ -6,11 +6,18 @@
                     <img src="{{owner.avatar_url}}" alt="{{owner.login}}" width="50">
                     <div class="name">{{owner.name}}<i>{{owner.login}}</i></div>
                 </a>
-                <span>repositories <b>{{owner.public_repos}}</b></span>
-                <span>gists <b>{{owner.public_gists}}</b></span>
-                <span>followers <b>{{owner.followers}}</b></span>
-                <span>following <b>{{owner.following}}</b></span>
-                <span>years old <b>{{owner.spent_years}}</b></span>
+                <div class="display-inline vertical-middle">
+                    <div>
+                        <span>repositories <b>{{owner.public_repos}}</b></span>
+                        <span>gists <b>{{owner.public_gists}}</b></span>
+                        <span>followers <b>{{owner.followers}}</b></span>
+                        <span>following <b>{{owner.following}}</b></span>
+                        <span>years old <b>{{owner.spent_years}}</b></span>
+                    </div>
+                    <div *ngIf="languages.length" class="skills">
+                        <span *ngFor="let lang of languages">{{lang}}</span>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-sm-6 text-right">

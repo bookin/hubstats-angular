@@ -14,6 +14,7 @@ export class DashboardComponent  implements OnInit  {
     public login: string = '';
     public owner: Object;
     public repositories: Array<Object>;
+    public languages: Array<any> = [];
 
     STORAGE_REPOSITORIES = 'repositories';
     STORAGE_OWNER = 'owner';
@@ -90,6 +91,9 @@ export class DashboardComponent  implements OnInit  {
                                         let totalSum = sumValues(languages);
                                         for(var lang in languages){
                                             languages[lang] = {'name':lang, 'percent':((languages[lang]/totalSum)*100).toFixed(2)};
+                                            if(this.languages.indexOf(lang) == -1){
+                                                this.languages.push(lang);
+                                            }
                                         }
                                         traffic['languages']=(<any>Object).values(languages);
                                     }
