@@ -45,7 +45,7 @@ export class DashboardComponent  implements OnInit  {
         //this.storage.removeItem(this.STORAGE_REPOSITORIES);
         let localRepositories = this.storage.getItem(this.STORAGE_REPOSITORIES);
 
-        if( localRepositories !== null && localRepositories !== "" && this.storage.isTimeExpiration(this.STORAGE_REPOSITORIES) ){
+        if( localRepositories !== null && localRepositories !== "" && !this.storage.isTimeExpiration(this.STORAGE_REPOSITORIES) ){
             this.repositories = JSON.parse(localRepositories);
             this.repositories['data']=this.sliceStringifyData(this.repositories['storage_data']);
             this.sortRepositories();
