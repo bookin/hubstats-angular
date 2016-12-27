@@ -46,6 +46,7 @@ export class DashboardComponent  implements OnInit  {
 
         if( localRepositories !== null && localRepositories !== "" && this.storage.isTimeExpiration(this.STORAGE_REPOSITORIES) ){
             this.repositories = JSON.parse(localRepositories);
+            this.repositories['data']=this.sliceStringifyData(this.repositories['storage_data']);
             this.sortRepositories();
             this.owner = JSON.parse(this.storage.getItem(this.STORAGE_OWNER));
         }else{
@@ -102,9 +103,9 @@ export class DashboardComponent  implements OnInit  {
                                     if(views.length) {
                                         traffic['firstDate'] = views[0]['timestamp'];
                                         traffic['lastDate'] = views[views.length - 1]['timestamp'];
-                                        let date_ago = new Date();
-                                        date_ago.setDate(date_ago.getDate() - 7);
-                                        let dateRange = DashboardComponent.getDateRange(date_ago.toString(), new Date().toString());
+                                        // let date_ago = new Date();
+                                        // date_ago.setDate(date_ago.getDate() - 7);
+                                        let dateRange = DashboardComponent.getDateRange(traffic['firstDate'], new Date().toString());
                                         for (let v in views) {
                                             let date = new Date(views[v]['timestamp']);
                                             date.setHours(0,0,0,0);
@@ -124,7 +125,10 @@ export class DashboardComponent  implements OnInit  {
                                             data.push(dateRange[d]);
                                         }
                                     }
-                                    traffic['data']=data.length?JSON.stringify(data):'';
+
+                                    traffic['storage_data']=data.length?data:'';
+                                    traffic['data']=this.sliceStringifyData(data);
+
                                     this.repositories.push(traffic);
                                     this.sortRepositories();
 
@@ -158,6 +162,14 @@ export class DashboardComponent  implements OnInit  {
                 console.log("the subscription is completed");
             }
         );
+    }
+
+    sliceStringifyData(storage_data:Array<any>):string{
+        if(storage_data && storage_data.length){
+            return JSON.stringify(storage_data.slice(Math.max(storage_data.length - 7, 0)));
+        }else{
+            return '';
+        }
     }
 
     static getDateRange(start: string, end: string) {
