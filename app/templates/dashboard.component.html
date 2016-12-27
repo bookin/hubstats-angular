@@ -1,7 +1,20 @@
 <div id="page" class="container-fluid">
     <div class="row">
-        <div class="col-sm-12 text-right">
-            <a [routerLink]="['/logout']">Выйти</a>
+        <div class="col-sm-6">
+            <div class="user" *ngIf="owner">
+                <a href="{{owner.html_url}}">
+                    <img src="{{owner.avatar_url}}" alt="{{owner.login}}" width="50">
+                    <div class="name">{{owner.name}}<i>{{owner.login}}</i></div>
+                </a>
+                <span>repositories <b>{{owner.public_repos}}</b></span>
+                <span>gists <b>{{owner.public_gists}}</b></span>
+                <span>followers <b>{{owner.followers}}</b></span>
+                <span>following <b>{{owner.following}}</b></span>
+                <span>years old <b>{{owner.spent_years}}</b></span>
+            </div>
+        </div>
+        <div class="col-sm-6 text-right">
+            <a [routerLink]="['/logout']" class="logout">Выйти</a>
         </div>
     </div>
     <div class="row">

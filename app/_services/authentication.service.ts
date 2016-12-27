@@ -17,7 +17,7 @@ export class AuthenticationService {
     }
 
     getAuthLink(){
-        return `https://github.com/login/oauth/authorize?client_id=${AppConfig.GITHUB_CLIENT_ID}&redirect_uri=${AppConfig.BACKEND_URL}/login&scope=repo`;
+        return `https://github.com/login/oauth/authorize?client_id=${AppConfig.GITHUB_CLIENT_ID}&redirect_uri=${AppConfig.BACKEND_URL}/login&scope=repo,repo:status`;
     }
 
     requestAccessToken(code: string){

@@ -9,10 +9,12 @@ import {Observable} from "rxjs/Rx";
 })
 
 export class DashboardComponent  implements OnInit  {
-    public owner: string = '';
+    public login: string = '';
+    public owner: Object;
     public repositories: Array<Object>;
 
-    STORAGE_ID = 'repositories';
+    STORAGE_REPOSITORIES = 'repositories';
+    STORAGE_OWNER = 'owner';
     STORAGE_TIMESTAMP = 'expiration_time';
     STORAGE_TIME_LIVE = 60*30*1000; //milliseconds
 
@@ -24,27 +26,34 @@ export class DashboardComponent  implements OnInit  {
     }
 
     ngOnInit() {
-        //localStorage.removeItem(this.STORAGE_ID);
+        //localStorage.removeItem(this.STORAGE_REPOSITORIES);
         let expiration_time = parseInt(localStorage.getItem(this.STORAGE_TIMESTAMP));
-        let localRepositories = localStorage.getItem(this.STORAGE_ID);
+        let localRepositories = localStorage.getItem(this.STORAGE_REPOSITORIES);
 
         if( localRepositories !== null && localRepositories !== "" && (expiration_time && (expiration_time > parseInt(new Date().getTime().toString()))) ){
             this.repositories = JSON.parse(localRepositories);
             this.sortRepositories();
+            this.owner = JSON.parse(localStorage.getItem(this.STORAGE_OWNER));
         }else{
             this.githubService.getUserInfo().subscribe(
                 user => {
-                    this.owner = user.login;
-                    this.githubService.getOwnerRepositories(this.owner).subscribe(
+                    this.owner = user;
+                    let date_diff = new Date((<any>new Date()).getTime() - (<any>new Date(user.created_at)).getTime());
+                    this.owner['spent_years'] = date_diff.getUTCFullYear() - 1970;
+                    localStorage.removeItem(this.STORAGE_OWNER);
+                    localStorage.setItem(this.STORAGE_OWNER, JSON.stringify(this.owner));
+
+                    this.login = user.login;
+                    this.githubService.getOwnerRepositories(this.login).subscribe(
                         repositories => {
                             this.repositories = [];
                             for(let i in repositories){
                                 //if(parseInt(i) > 3){break;}
 
                                 Observable.forkJoin([
-                                    this.githubService.getRepoTraffic(this.owner, repositories[i]['name']),
-                                    this.githubService.getRepoReferrers(this.owner, repositories[i]['name']),
-                                    this.githubService.getRepoLanguages(this.owner, repositories[i]['name'])
+                                    this.githubService.getRepoTraffic(this.login, repositories[i]['name']),
+                                    this.githubService.getRepoReferrers(this.login, repositories[i]['name']),
+                                    this.githubService.getRepoLanguages(this.login, repositories[i]['name'])
                                 ]).subscribe(
                                     response => {
                                         let traffic = response[0];
@@ -62,7 +71,7 @@ export class DashboardComponent  implements OnInit  {
                                         }
 
                                         traffic['name']=repositories[i]['name'];
-                                        traffic['owner']=this.owner;
+                                        traffic['owner']=this.login;
                                         traffic['referrers']=referrers;
 
                                         let views = traffic['views'];
@@ -96,8 +105,8 @@ export class DashboardComponent  implements OnInit  {
                                         let now = new Date();
                                         now.setTime(now.getTime() + this.STORAGE_TIME_LIVE);
                                         localStorage.setItem(this.STORAGE_TIMESTAMP, now.getTime().toString());
-                                        localStorage.removeItem(this.STORAGE_ID);
-                                        localStorage.setItem(this.STORAGE_ID, JSON.stringify(this.repositories));
+                                        localStorage.removeItem(this.STORAGE_REPOSITORIES);
+                                        localStorage.setItem(this.STORAGE_REPOSITORIES, JSON.stringify(this.repositories));
                                     },
                                     error => {
                                         console.error(error);
