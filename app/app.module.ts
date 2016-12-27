@@ -10,6 +10,7 @@ import { DashboardComponent } from './dashboard.component';
 
 import { AuthenticationService } from './_services/authentication.service';
 import { GithubService } from './_services/github.service';
+import { StorageService } from './_services/storage.service';
 
 import { MorrisAreaDirective } from './_directives/morris-area.directive';
 
@@ -35,7 +36,8 @@ import { Routing } from './app.routing';
     providers: [
         AuthenticationService,
         AuthGuard,
-        GithubService
+        GithubService,
+        StorageService
     ],
     bootstrap:    [
         AppComponent

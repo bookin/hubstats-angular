@@ -1,5 +1,6 @@
 import {Component, OnInit, ElementRef} from '@angular/core';
 import {GithubService} from './_services/github.service';
+import {StorageService} from './_services/storage.service';
 import {AuthenticationService} from './_services/authentication.service';
 import {Observable} from "rxjs/Rx";
 
@@ -20,28 +21,29 @@ export class DashboardComponent  implements OnInit  {
 
     constructor(
         private githubService: GithubService,
-        private authenticationService: AuthenticationService
+        private authenticationService: AuthenticationService,
+        private storage:StorageService
     ) {
         githubService.accessToken = authenticationService.getAccessToken();
     }
 
     ngOnInit() {
-        //localStorage.removeItem(this.STORAGE_REPOSITORIES);
-        let expiration_time = parseInt(localStorage.getItem(this.STORAGE_TIMESTAMP));
-        let localRepositories = localStorage.getItem(this.STORAGE_REPOSITORIES);
+        //this.storage.removeItem(this.STORAGE_REPOSITORIES);
+        let expiration_time = parseInt(this.storage.getItem(this.STORAGE_TIMESTAMP));
+        let localRepositories = this.storage.getItem(this.STORAGE_REPOSITORIES);
 
         if( localRepositories !== null && localRepositories !== "" && (expiration_time && (expiration_time > parseInt(new Date().getTime().toString()))) ){
             this.repositories = JSON.parse(localRepositories);
             this.sortRepositories();
-            this.owner = JSON.parse(localStorage.getItem(this.STORAGE_OWNER));
+            this.owner = JSON.parse(this.storage.getItem(this.STORAGE_OWNER));
         }else{
             this.githubService.getUserInfo().subscribe(
                 user => {
                     this.owner = user;
                     let date_diff = new Date((<any>new Date()).getTime() - (<any>new Date(user.created_at)).getTime());
                     this.owner['spent_years'] = date_diff.getUTCFullYear() - 1970;
-                    localStorage.removeItem(this.STORAGE_OWNER);
-                    localStorage.setItem(this.STORAGE_OWNER, JSON.stringify(this.owner));
+                    this.storage.removeItem(this.STORAGE_OWNER);
+                    this.storage.setItem(this.STORAGE_OWNER, JSON.stringify(this.owner));
 
                     this.login = user.login;
                     this.githubService.getOwnerRepositories(this.login).subscribe(
@@ -104,9 +106,9 @@ export class DashboardComponent  implements OnInit  {
 
                                         let now = new Date();
                                         now.setTime(now.getTime() + this.STORAGE_TIME_LIVE);
-                                        localStorage.setItem(this.STORAGE_TIMESTAMP, now.getTime().toString());
-                                        localStorage.removeItem(this.STORAGE_REPOSITORIES);
-                                        localStorage.setItem(this.STORAGE_REPOSITORIES, JSON.stringify(this.repositories));
+                                        this.storage.setItem(this.STORAGE_TIMESTAMP, now.getTime().toString());
+                                        this.storage.removeItem(this.STORAGE_REPOSITORIES);
+                                        this.storage.setItem(this.STORAGE_REPOSITORIES, JSON.stringify(this.repositories));
                                     },
                                     error => {
                                         console.error(error);
