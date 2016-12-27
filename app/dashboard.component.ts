@@ -41,7 +41,7 @@ export class DashboardComponent  implements OnInit  {
             //reload data
         }
 
-        this.storage.removeItem(this.STORAGE_REPOSITORIES);
+        //this.storage.removeItem(this.STORAGE_REPOSITORIES);
         let localRepositories = this.storage.getItem(this.STORAGE_REPOSITORIES);
 
         if( localRepositories !== null && localRepositories !== "" && this.storage.isTimeExpiration(this.STORAGE_REPOSITORIES) ){
