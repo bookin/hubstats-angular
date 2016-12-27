@@ -1,7 +1,8 @@
-import {Component, OnInit, ElementRef} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {GithubService} from './_services/github.service';
 import {StorageService} from './_services/storage.service';
 import {AuthenticationService} from './_services/authentication.service';
+import {ActivatedRoute} from '@angular/router';
 import {Observable} from "rxjs/Rx";
 
 @Component({
@@ -22,12 +23,25 @@ export class DashboardComponent  implements OnInit  {
     constructor(
         private githubService: GithubService,
         private authenticationService: AuthenticationService,
-        private storage:StorageService
+        private storage:StorageService,
+        private activeRoute: ActivatedRoute
     ) {
         githubService.accessToken = authenticationService.getAccessToken();
     }
 
     ngOnInit() {
+        this.activeRoute.params.subscribe(
+            params =>{
+                console.log(params['username']);
+            }
+        );
+
+        if(this.login != ''){
+            //load data from storage
+        }else{
+            //reload data
+        }
+
         //this.storage.removeItem(this.STORAGE_REPOSITORIES);
         let expiration_time = parseInt(this.storage.getItem(this.STORAGE_TIMESTAMP));
         let localRepositories = this.storage.getItem(this.STORAGE_REPOSITORIES);
@@ -37,107 +51,115 @@ export class DashboardComponent  implements OnInit  {
             this.sortRepositories();
             this.owner = JSON.parse(this.storage.getItem(this.STORAGE_OWNER));
         }else{
-            this.githubService.getUserInfo().subscribe(
-                user => {
-                    this.owner = user;
-                    let date_diff = new Date((<any>new Date()).getTime() - (<any>new Date(user.created_at)).getTime());
-                    this.owner['spent_years'] = date_diff.getUTCFullYear() - 1970;
-                    this.storage.removeItem(this.STORAGE_OWNER);
-                    this.storage.setItem(this.STORAGE_OWNER, JSON.stringify(this.owner));
-
-                    this.login = user.login;
-                    this.githubService.getOwnerRepositories(this.login).subscribe(
-                        repositories => {
-                            this.repositories = [];
-                            for(let i in repositories){
-                                //if(parseInt(i) > 3){break;}
-
-                                Observable.forkJoin([
-                                    this.githubService.getRepoTraffic(this.login, repositories[i]['name']),
-                                    this.githubService.getRepoReferrers(this.login, repositories[i]['name']),
-                                    this.githubService.getRepoLanguages(this.login, repositories[i]['name'])
-                                ]).subscribe(
-                                    response => {
-                                        let traffic = response[0];
-                                        let referrers = response[1];
-                                        let languages = response[2];
-
-                                        const sumValues = (obj: Object) => { return (<any>Object).values(obj).reduce((a: number, b:number) => a + b)};
-
-                                        if(Object.keys(languages).length){
-                                            let totalSum = sumValues(languages);
-                                            for(var lang in languages){
-                                                languages[lang] = {'name':lang, 'percent':((languages[lang]/totalSum)*100).toFixed(2)};
-                                            }
-                                            traffic['languages']=(<any>Object).values(languages);
-                                        }
-
-                                        traffic['name']=repositories[i]['name'];
-                                        traffic['owner']=this.login;
-                                        traffic['referrers']=referrers;
-
-                                        let views = traffic['views'];
-                                        let data: Array<Object> = [];
-                                        if(views.length) {
-                                            traffic['firstDate'] = views[0]['timestamp'];
-                                            traffic['lastDate'] = views[views.length - 1]['timestamp'];
-                                            let dateRange = DashboardComponent.getDateRange(traffic['firstDate'], traffic['lastDate']);
-                                            for (let v in views) {
-                                                let date = new Date(views[v]['timestamp']);
-                                                let time = date.getTime();
-                                                if (typeof dateRange[time] !== 'undefined') {
-                                                    dateRange[time]['x'] = date;
-                                                    dateRange[time]['count'] = views[v]['count'];
-                                                    dateRange[time]['uniques'] = views[v]['uniques'];
-                                                }
-                                            }
-                                            for (let d in dateRange) {
-                                                if (typeof dateRange[d]['x'] === 'undefined') {
-                                                    let date = new Date();
-                                                    date.setTime(parseInt(d));
-                                                    dateRange[d]['x'] = date;
-                                                }
-                                                data.push(dateRange[d]);
-                                            }
-                                        }
-                                        traffic['data']=data.length?JSON.stringify(data):'';
-                                        this.repositories.push(traffic);
-                                        this.sortRepositories();
-
-                                        let now = new Date();
-                                        now.setTime(now.getTime() + this.STORAGE_TIME_LIVE);
-                                        this.storage.setItem(this.STORAGE_TIMESTAMP, now.getTime().toString());
-                                        this.storage.removeItem(this.STORAGE_REPOSITORIES);
-                                        this.storage.setItem(this.STORAGE_REPOSITORIES, JSON.stringify(this.repositories));
-                                    },
-                                    error => {
-                                        console.error(error);
-                                        //console.log(JSON.stringify(error.json()));
-                                    },
-                                    () => {
-                                        console.log("the all subscriptions is completed");
-                                    }
-                                );
-
-                                /*this.githubService.getRepoTraffic(this.owner, repositories[i]['name']).subscribe(t =>{
-                                    let traffic = t;
-                                    this.githubService.getRepoReferrers(this.owner, repositories[i]['name']).subscribe(r =>{
-
-                                    });
-                                });*/
-                            }
-
-                        }
-                    );
-                },
-                error => {
-                    console.log(JSON.stringify(error.json()));
-                },
-                () => {
-                    console.log("the subscription is completed");
-                }
-            );
+            this.reloadData();
         }
+    }
+
+    loadFromStorage(){
+
+    }
+
+    reloadData(){
+        this.githubService.getUserInfo().subscribe(
+            user => {
+                this.owner = user;
+                let date_diff = new Date((<any>new Date()).getTime() - (<any>new Date(user.created_at)).getTime());
+                this.owner['spent_years'] = date_diff.getUTCFullYear() - 1970;
+                this.storage.removeItem(this.STORAGE_OWNER);
+                this.storage.setItem(this.STORAGE_OWNER, JSON.stringify(this.owner));
+
+                this.login = user.login;
+                this.githubService.getOwnerRepositories(this.login).subscribe(
+                    repositories => {
+                        this.repositories = [];
+                        for(let i in repositories){
+                            //if(parseInt(i) > 3){break;}
+
+                            Observable.forkJoin([
+                                this.githubService.getRepoTraffic(this.login, repositories[i]['name']),
+                                this.githubService.getRepoReferrers(this.login, repositories[i]['name']),
+                                this.githubService.getRepoLanguages(this.login, repositories[i]['name'])
+                            ]).subscribe(
+                                response => {
+                                    let traffic = response[0];
+                                    let referrers = response[1];
+                                    let languages = response[2];
+
+                                    const sumValues = (obj: Object) => { return (<any>Object).values(obj).reduce((a: number, b:number) => a + b)};
+
+                                    if(Object.keys(languages).length){
+                                        let totalSum = sumValues(languages);
+                                        for(var lang in languages){
+                                            languages[lang] = {'name':lang, 'percent':((languages[lang]/totalSum)*100).toFixed(2)};
+                                        }
+                                        traffic['languages']=(<any>Object).values(languages);
+                                    }
+
+                                    traffic['name']=repositories[i]['name'];
+                                    traffic['owner']=this.login;
+                                    traffic['referrers']=referrers;
+
+                                    let views = traffic['views'];
+                                    let data: Array<Object> = [];
+                                    if(views.length) {
+                                        traffic['firstDate'] = views[0]['timestamp'];
+                                        traffic['lastDate'] = views[views.length - 1]['timestamp'];
+                                        let dateRange = DashboardComponent.getDateRange(traffic['firstDate'], traffic['lastDate']);
+                                        for (let v in views) {
+                                            let date = new Date(views[v]['timestamp']);
+                                            let time = date.getTime();
+                                            if (typeof dateRange[time] !== 'undefined') {
+                                                dateRange[time]['x'] = date;
+                                                dateRange[time]['count'] = views[v]['count'];
+                                                dateRange[time]['uniques'] = views[v]['uniques'];
+                                            }
+                                        }
+                                        for (let d in dateRange) {
+                                            if (typeof dateRange[d]['x'] === 'undefined') {
+                                                let date = new Date();
+                                                date.setTime(parseInt(d));
+                                                dateRange[d]['x'] = date;
+                                            }
+                                            data.push(dateRange[d]);
+                                        }
+                                    }
+                                    traffic['data']=data.length?JSON.stringify(data):'';
+                                    this.repositories.push(traffic);
+                                    this.sortRepositories();
+
+                                    let now = new Date();
+                                    now.setTime(now.getTime() + this.STORAGE_TIME_LIVE);
+                                    this.storage.setItem(this.STORAGE_TIMESTAMP, now.getTime().toString());
+                                    this.storage.removeItem(this.STORAGE_REPOSITORIES);
+                                    this.storage.setItem(this.STORAGE_REPOSITORIES, JSON.stringify(this.repositories));
+                                },
+                                error => {
+                                    console.error(error);
+                                    //console.log(JSON.stringify(error.json()));
+                                },
+                                () => {
+                                    console.log("the all subscriptions is completed");
+                                }
+                            );
+
+                            /*this.githubService.getRepoTraffic(this.owner, repositories[i]['name']).subscribe(t =>{
+                             let traffic = t;
+                             this.githubService.getRepoReferrers(this.owner, repositories[i]['name']).subscribe(r =>{
+
+                             });
+                             });*/
+                        }
+
+                    }
+                );
+            },
+            error => {
+                console.log(JSON.stringify(error.json()));
+            },
+            () => {
+                console.log("the subscription is completed");
+            }
+        );
     }
 
     static getDateRange(start: string, end: string) {
