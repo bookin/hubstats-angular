@@ -11,11 +11,15 @@
                     <div class="head">
                         <h2><a href="https://github.com/{{repo.owner}}/{{repo.name}}" target="_blank">{{repo.name}}</a></h2>
                         <span data-toggle="tooltip" data-title="Views/Unique" data-placement="top">{{repo.count}}/{{repo.uniques}}</span>
-                        <ul *ngIf="repo.languages" class="list-inline"><li *ngFor="let lang of repo.languages"><b>{{lang.name}}</b> {{lang.percent}}%</li></ul>
                         <ul class="poser-list list-unstyled list-inline pull-right">
                             <li><img src="https://poser.pugx.org/{{repo.owner}}/{{repo.name}}/downloads?format=flat" class="poser"></li>
                             <li><img src="https://poser.pugx.org/{{repo.owner}}/{{repo.name}}/d/monthly?format=flat" class="poser"></li>
                             <li><img src="https://poser.pugx.org/{{repo.owner}}/{{repo.name}}/d/daily?format=flat" class="poser"></li>
+                        </ul>
+                        <ul *ngIf="repo.languages" class="list-inline">
+                            <li *ngFor="let lang of repo.languages">
+                                <small><b>{{lang.name}}</b> {{lang.percent}}%</small>
+                            </li>
                         </ul>
                     </div>
                     <small class="referrers" *ngIf="repo.referrers">
