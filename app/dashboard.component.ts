@@ -41,7 +41,7 @@ export class DashboardComponent  implements OnInit  {
             //reload data
         }
 
-        //this.storage.removeItem(this.STORAGE_REPOSITORIES);
+        this.storage.removeItem(this.STORAGE_REPOSITORIES);
         let localRepositories = this.storage.getItem(this.STORAGE_REPOSITORIES);
 
         if( localRepositories !== null && localRepositories !== "" && this.storage.isTimeExpiration(this.STORAGE_REPOSITORIES) ){
@@ -102,9 +102,12 @@ export class DashboardComponent  implements OnInit  {
                                     if(views.length) {
                                         traffic['firstDate'] = views[0]['timestamp'];
                                         traffic['lastDate'] = views[views.length - 1]['timestamp'];
-                                        let dateRange = DashboardComponent.getDateRange(traffic['firstDate'], traffic['lastDate']);
+                                        let date_ago = new Date();
+                                        date_ago.setDate(date_ago.getDate() - 7);
+                                        let dateRange = DashboardComponent.getDateRange(date_ago.toString(), new Date().toString());
                                         for (let v in views) {
                                             let date = new Date(views[v]['timestamp']);
+                                            date.setHours(0,0,0,0);
                                             let time = date.getTime();
                                             if (typeof dateRange[time] !== 'undefined') {
                                                 dateRange[time]['x'] = date;
@@ -162,9 +165,11 @@ export class DashboardComponent  implements OnInit  {
 
         let startDate = new Date(start);
         startDate.setDate(startDate.getDate() - 1);
+        startDate.setHours(0,0,0,0);
 
         let endDate = new Date(end);
         endDate.setDate(endDate.getDate() + 1);
+        endDate.setHours(0,0,0,0);
 
         while (startDate <= endDate) {
             dateArray[startDate.getTime()]={'count':0, 'uniques':0};
