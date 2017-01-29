@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {GithubService} from './_services/github.service';
+import {ShieldsService} from './_services/shields.service';
 import {StorageService} from './_services/storage.service';
 import {AuthenticationService} from './_services/authentication.service';
 import {ActivatedRoute} from '@angular/router';
@@ -19,9 +20,11 @@ export class DashboardComponent  implements OnInit  {
     STORAGE_REPOSITORIES = 'repositories';
     STORAGE_OWNER = 'owner';
     STORAGE_TIME_LIVE = 60*30*1000; //milliseconds
+    DEBUG = false;
 
     constructor(
         private githubService: GithubService,
+        private shieldsService: ShieldsService,
         private authenticationService: AuthenticationService,
         private storage:StorageService,
         private activeRoute: ActivatedRoute
@@ -45,7 +48,7 @@ export class DashboardComponent  implements OnInit  {
         //this.storage.removeItem(this.STORAGE_REPOSITORIES);
         let localRepositories = this.storage.getItem(this.STORAGE_REPOSITORIES);
 
-        if( localRepositories !== null && localRepositories !== "" && !this.storage.isTimeExpiration(this.STORAGE_REPOSITORIES) ){
+        if(!this.DEBUG && (localRepositories !== null && localRepositories !== "" && !this.storage.isTimeExpiration(this.STORAGE_REPOSITORIES))){
             this.repositories = JSON.parse(localRepositories);
             this.repositories['data']=this.sliceStringifyData(this.repositories['storage_data']);
             this.sortRepositories();
@@ -73,7 +76,7 @@ export class DashboardComponent  implements OnInit  {
                     repositories => {
                         this.repositories = [];
                         for(let i in repositories){
-                            //if(parseInt(i) > 3){break;}
+                            if(this.DEBUG && (parseInt(i) > 5)){break;}
 
                             Observable.forkJoin([
                                 this.githubService.getRepoTraffic(this.login, repositories[i]['name']),
@@ -101,6 +104,10 @@ export class DashboardComponent  implements OnInit  {
                                     traffic['name']=repositories[i]['name'];
                                     traffic['owner']=this.login;
                                     traffic['referrers']=referrers;
+
+                                    this.shieldsService.getBadges(`${traffic['owner']}/${traffic['name']}`, (badges)=>{
+                                        traffic['badges'] = badges;
+                                    });
 
                                     let views = traffic['views'];
                                     let data: Array<Object> = [];

@@ -39,10 +39,10 @@
                     <div class="head">
                         <h2><a href="https://github.com/{{repo.owner}}/{{repo.name}}" target="_blank">{{repo.name}}</a></h2>
                         <span data-toggle="tooltip" data-title="Views/Unique" data-placement="top">{{repo.count}}/{{repo.uniques}}</span>
-                        <ul class="poser-list list-unstyled list-inline pull-right">
-                            <li><img src="https://poser.pugx.org/{{repo.owner}}/{{repo.name}}/downloads?format=flat" class="poser"></li>
-                            <li><img src="https://poser.pugx.org/{{repo.owner}}/{{repo.name}}/d/monthly?format=flat" class="poser"></li>
-                            <li><img src="https://poser.pugx.org/{{repo.owner}}/{{repo.name}}/d/daily?format=flat" class="poser"></li>
+                        <ul *ngIf="repo.badges" class="poser-list list-unstyled list-inline pull-right">
+                            <li *ngFor="let badge of repo.badges">
+                                <img src="{{badge}}" class="poser">
+                            </li>
                         </ul>
                         <ul *ngIf="repo.languages" class="list-inline">
                             <li *ngFor="let lang of repo.languages">

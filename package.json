@@ -5,7 +5,8 @@
   "scripts": {
     "start":"node server.js",
     "start-dev": "tsc && concurrently \"tsc -w\" ",
-    "postinstall": "tsc"
+    "postinstall": "tsc",
+    "complite-and-start": "tsc && node server.js"
   },
   "dependencies": {
     "@angular/common": "~2.3.0",
