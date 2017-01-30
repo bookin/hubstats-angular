@@ -16,8 +16,8 @@ export class GithubService {
         return this.sendRequest('/user');
     }
 
-    getOwnerRepositories(owner: string){
-        return this.sendRequest('/users/'+owner+'/repos');
+    getOwnerRepositories(owner: string, page?: number){
+        return this.sendRequest('/users/'+owner+'/repos', (page?{'page':page}:null));
     }
 
     getRepoTraffic(owner: string, repo: string){
