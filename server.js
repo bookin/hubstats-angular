@@ -3,6 +3,10 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var request = require('request');
 
+var lenv = {
+    GITHUB_CLIENT_ID:process.env.GITHUB_CLIENT_ID.trim(),
+    GITHUB_CLIENT_SECRET:process.env.GITHUB_CLIENT_SECRET.trim()
+};
 
 var app = new express();
 
@@ -23,8 +27,8 @@ app.get('/token/:code', function(req, res) {
     request.post({
         uri: 'https://github.com/login/oauth/access_token',
         form: {
-            client_id: process.env.GITHUB_CLIENT_ID,
-            client_secret: process.env.GITHUB_CLIENT_SECRET,
+            client_id: lenv.GITHUB_CLIENT_ID.trim(),
+            client_secret: lenv.GITHUB_CLIENT_SECRET.trim(),
             code: req.params.code
         },
         json: true
@@ -93,8 +97,7 @@ var protected = function(req, res, next){
 };
 
 app.get('/env/config', protected, function(req, res) {
-    var env = process.env;
-    res.json(env);
+    res.json(lenv);
 });
 
 app.all('/*', function(req, res) {
