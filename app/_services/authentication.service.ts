@@ -27,6 +27,9 @@ export class AuthenticationService {
                 if(token && token.access_token){
                     localStorage.setItem('access_token', token.access_token);
                 }
+                if(token.error !== undefined){
+                    throw token.error_description;
+                }
             });
         }
     }

@@ -11,6 +11,7 @@
                         Sign in
                     </a>
                 </p>
+                <div *ngIf="this.error" class="alert alert-danger" role="alert">{{this.error}}</div>
             </div>
 
             <div class="mastfoot">

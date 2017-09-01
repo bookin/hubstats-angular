@@ -12,6 +12,7 @@ import 'rxjs/add/operator/map';
 })
 export class LoginComponent  implements OnInit  {
     returnUrl: string;
+    error: string;
 
     constructor(
         private activeRoute: ActivatedRoute,
@@ -34,7 +35,11 @@ export class LoginComponent  implements OnInit  {
                                 this.router.navigate([this.returnUrl]);
                             },
                             error => {
-                                console.log(JSON.stringify(error.json()));
+                                if(error && error !== undefined){
+                                    this.error = error;
+                                }
+                                console.log(error);
+                                //console.log(JSON.stringify(error.json()));
                                 this.router.navigate([this.returnUrl]);
                             },
                             () => {
