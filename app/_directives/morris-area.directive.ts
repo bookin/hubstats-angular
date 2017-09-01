@@ -28,10 +28,10 @@ export class MorrisAreaDirective implements AfterViewInit{
                 let date = new Date(x);
                 return ('0' + (date.getMonth() + 1)).slice(-2) + '/' +  ('0' + date.getDate()).slice(-2) + '/' + date.getFullYear().toString().replace(new RegExp('^.{2}'), '');
             },
-            'lineColors':['#87D37C', '#4183D7'],
+            'lineColors':['#28A745', '#005CC5'],
             'lineWidth':2,
             'hideHover':true,
-            'fillOpacity':0.5,
+            'fillOpacity':0,
             'resize':true
         });
     }

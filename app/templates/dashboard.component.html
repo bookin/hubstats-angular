@@ -1,62 +1,69 @@
 <div id="page" class="container-fluid">
     <div class="row">
-        <div class="col-sm-6">
-            <div class="user" *ngIf="owner">
-                <a href="{{owner.html_url}}">
-                    <img src="{{owner.avatar_url}}" alt="{{owner.login}}" width="50">
-                    <div class="name">{{owner.name}}<i>{{owner.login}}</i></div>
-                </a>
-                <div class="display-inline vertical-middle">
-                    <div>
-                        <span>repositories <b>{{owner.public_repos}}</b></span>
-                        <span>gists <b>{{owner.public_gists}}</b></span>
-                        <span>followers <b>{{owner.followers}}</b></span>
-                        <span>following <b>{{owner.following}}</b></span>
-                        <span>years old <b>{{owner.spent_years}}</b></span>
-                    </div>
-                    <div *ngIf="languages.length" class="skills">
-                        <span *ngFor="let lang of languages">{{lang}}</span>
+        <div id="header" class="clearfix">
+            <div class="col-sm-6">
+                <div class="user" *ngIf="owner">
+                    <a href="{{owner.html_url}}">
+                        <img src="{{owner.avatar_url}}" alt="{{owner.login}}" width="50">
+                        <div class="name">{{owner.name}}<i>{{owner.login}}</i></div>
+                    </a>
+                    <div class="display-inline vertical-middle">
+                        <div>
+                            <span>repositories <b>{{owner.public_repos}}</b></span>
+                            <span>gists <b>{{owner.public_gists}}</b></span>
+                            <span>followers <b>{{owner.followers}}</b></span>
+                            <span>following <b>{{owner.following}}</b></span>
+                            <span>years old <b>{{owner.spent_years}}</b></span>
+                        </div>
+                        <div *ngIf="languages.length" class="skills">
+                            <span *ngFor="let lang of languages">{{lang}}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6 text-right">
-            <iframe src="https://ghbtns.com/github-btn.html?user=bookin&repo=hubstats-angular&type=star&count=true" frameborder="0" scrolling="0" width="170px" height="20px" class="githubstar"></iframe>
-            <a [routerLink]="['/logout']" class="logout btn btn-default">Выйти</a>
+            <div class="col-sm-6">
+                <div class="text-right e-v-b">
+                    <a href="#" (click)="onRefreshData($event)"  class="btn btn-link"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> refresh cache</a>
+                    <!--<iframe src="https://ghbtns.com/github-btn.html?user=bookin&repo=hubstats-angular&type=star&count=true" frameborder="0" scrolling="0" width="170px" height="20px" class="githubstar"></iframe>-->
+                    <a [routerLink]="['/logout']" class="logout btn btn-default">Выйти</a>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row toolbar">
         <div class="col-sm-10">
         </div>
-        <div class="col-sm-2 text-right">
-            <a href="#" (click)="onRefreshData($event)"  class="black"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> refresh cache</a>
+        <div class="col-sm-2">
         </div>
     </div>
     <div class="row">
         <div class="col-sm-12">
             <div class="panel panel-default" *ngFor="let repo of repositories">
-                <div class="panel-body">
-                    <div class="head">
-                        <h2><a href="https://github.com/{{repo.owner}}/{{repo.name}}" target="_blank">{{repo.name}}</a></h2>
-                        <span data-toggle="tooltip" data-title="Views/Unique" data-placement="top">{{repo.count}}/{{repo.uniques}}</span>
-                        <ul *ngIf="repo.badges" class="poser-list list-unstyled list-inline pull-right">
-                            <li *ngFor="let badge of repo.badges">
-                                <img src="{{badge}}" class="poser">
-                            </li>
-                        </ul>
-                        <ul *ngIf="repo.languages" class="list-inline">
-                            <li *ngFor="let lang of repo.languages">
-                                <small><b>{{lang.name}}</b> {{lang.percent}}%</small>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="panel-head">
+                    <h2><a href="https://github.com/{{repo.owner}}/{{repo.name}}" target="_blank">{{repo.name}}</a></h2>
+                    <span data-toggle="tooltip" data-title="Views/Unique" data-placement="top">{{repo.count}}/{{repo.uniques}}</span>
+                    <ul *ngIf="repo.badges" class="poser-list list-unstyled list-inline pull-right">
+                        <li *ngFor="let badge of repo.badges">
+                            <img src="{{badge}}" class="poser">
+                        </li>
+                    </ul>
+                    <ul *ngIf="repo.languages" class="list-inline">
+                        <li *ngFor="let lang of repo.languages">
+                            <small><b>{{lang.name}}</b> {{lang.percent}}%</small>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel-body" *ngIf="repo.data.length > 0">
                     <small class="referrers" *ngIf="repo.referrers">
                         <ul class="list-unstyled list-inline text-muted">
-                            <li *ngFor="let referrer of repo.referrers">{{referrer.referrer}} {{referrer.count}}/{{referrer.uniques}}</li>
+                            <li *ngFor="let referrer of repo.referrers">
+                                <img alt="" class="top-domains-icon" height="16" src="https://favicons.githubusercontent.com/{{referrer.referrer}}" width="16">
+                                {{referrer.referrer}} {{referrer.count}}/{{referrer.uniques}}
+                            </li>
                         </ul>
                     </small>
                     <div class="clearfix"></div>
-                    <div morris-area id="{{repo.name}}" [name]="repo.name" [data]="repo.data" *ngIf="repo.data.length > 0"></div>
+                    <div morris-area id="{{repo.name}}" [name]="repo.name" [data]="repo.data"></div>
                 </div>
             </div>
         </div>
